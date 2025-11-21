@@ -22,13 +22,29 @@ export function NavBar({ items, className }: NavBarProps) {
   const [activeTab, setActiveTab] = useState(items[0].name)
   const [expanded, setExpanded] = useState(false)
   const [hovering, setHovering] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+  const [windowWidth, setWindowWidth] = useState(0) // Initialize with 0 to avoid hydration mismatch
   const containerRef = useRef<HTMLDivElement>(null)
   const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth
+      setIsMobile(width < 768)
+      setWindowWidth(width)
+    }
+
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   // Calculate widths
   const collapsedWidth = 140
   // Dynamic width based on items count + buffer for ModeToggle
-  const expandedWidth = Math.min(items.length * 120 + 100, 900)
+  const expandedWidth = isMobile
+    ? Math.min(items.length * 90 + 100, windowWidth * 0.95)
+    : Math.min(items.length * 120 + 100, 900)
 
   const pillWidth = useSpring(collapsedWidth, { stiffness: 220, damping: 25, mass: 1 })
 
@@ -93,17 +109,17 @@ export function NavBar({ items, className }: NavBarProps) {
   }, [hovering, pillWidth, expandedWidth])
 
   return (
-    <div className={cn("fixed top-6 left-1/2 -translate-x-1/2 z-50", className)}>
+    <div className={cn("fixed top-6 left-1/2 -translate-x-1/2 z-50 max-w-[100vw]", className)}>
       <motion.nav
         onMouseEnter={() => setHovering(true)}
         onMouseLeave={() => setHovering(false)}
         className="relative rounded-full"
         style={{
           width: pillWidth,
-          height: '56px',
+          height: '36px',
           background: 'rgba(255, 255, 255, 0.0)',
-          backdropFilter: 'blur(5px)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
+          backdropFilter: 'blur(1px)',
+          border: '0px solid rgba(255, 255, 255, 0.1)',
           boxShadow: expanded
             ? `
               0 2px 4px rgba(0, 0, 0, 0.08),
@@ -314,12 +330,14 @@ export function NavBar({ items, className }: NavBarProps) {
                       }}
                       className="relative cursor-pointer transition-all duration-200"
                       style={{
-                        fontSize: isActive ? '15.5px' : '15px',
+                        fontSize: isMobile
+                          ? (isActive ? '14px' : '13px')
+                          : (isActive ? '15.5px' : '15px'),
                         fontWeight: isActive ? 680 : 510,
                         color: isActive ? '#1a1a1a' : '#656565',
                         textDecoration: 'none',
                         letterSpacing: '0.45px',
-                        padding: '8px 12px',
+                        padding: isMobile ? '6px 8px' : '8px 12px',
                         whiteSpace: 'nowrap',
                         fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "SF Pro Display", Poppins, sans-serif',
                         WebkitFontSmoothing: 'antialiased',

@@ -109,7 +109,7 @@ export function NavBar({ items, className }: NavBarProps) {
   }, [hovering, pillWidth, expandedWidth])
 
   return (
-    <div className={cn("fixed top-6 left-1/2 -translate-x-1/2 z-50 max-w-[100vw]", className)}>
+    <div className={cn("fixed top-6 left-1/2 -translate-x-1/2 z-50 max-w-full", className)}>
       <motion.nav
         onMouseEnter={() => setHovering(true)}
         onMouseLeave={() => setHovering(false)}
@@ -334,7 +334,7 @@ export function NavBar({ items, className }: NavBarProps) {
                           ? (isActive ? '14px' : '13px')
                           : (isActive ? '15.5px' : '15px'),
                         fontWeight: isActive ? 680 : 510,
-                        color: isActive ? '#1a1a1a' : '#656565',
+                        color: isActive ? 'var(--foreground)' : 'var(--muted-foreground)',
                         textDecoration: 'none',
                         letterSpacing: '0.45px',
                         padding: isMobile ? '6px 8px' : '8px 12px',
@@ -359,7 +359,7 @@ export function NavBar({ items, className }: NavBarProps) {
                       }}
                       onMouseEnter={(e) => {
                         if (!isActive) {
-                          e.currentTarget.style.color = '#3a3a3a'
+                          e.currentTarget.style.color = 'var(--foreground)'
                           e.currentTarget.style.transform = 'translateY(-0.5px)'
                           e.currentTarget.style.textShadow = `
                             0 1px 0 rgba(0, 0, 0, 0.28),
@@ -371,7 +371,7 @@ export function NavBar({ items, className }: NavBarProps) {
                       }}
                       onMouseLeave={(e) => {
                         if (!isActive) {
-                          e.currentTarget.style.color = '#656565'
+                          e.currentTarget.style.color = 'var(--muted-foreground)'
                           e.currentTarget.style.transform = 'translateY(0)'
                           e.currentTarget.style.textShadow = `
                             0 1px 0 rgba(0, 0, 0, 0.22),
